@@ -3,4 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/tv_weather_data"
+        android:padding="16dp"
+        android:textSize="18sp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </FrameLayout>
