@@ -57,7 +57,7 @@ import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
 
 import java.net.URL;
 
-// TODO (1) Implement the proper LoaderCallbacks interface and the methods of that interface
+// COMPLETED (1) Implement the proper LoaderCallbacks interface and the methods of that interface
 public class MainActivity extends AppCompatActivity implements ForecastAdapterOnClickHandler, LoaderManager.LoaderCallbacks<String[]> {
 
     private static final String TAG = MainActivity.class.getSimpleName() + "_GV";
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
          */
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
-        // TODO (7) Remove the code for the AsyncTask and initialize the AsyncTaskLoader
+        // COMPLETED (7) Remove the code for the AsyncTask and initialize the AsyncTaskLoader
         /* Once all of our views are setup, we can load the weather data. */
         getSupportLoaderManager().initLoader(SUNSHINE_LOADER, null, this);
 
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
         }
     }
 
-    // TODO (2) Within onCreateLoader, return a new AsyncTaskLoader that looks a lot like the existing FetchWeatherTask.
+    // COMPLETED (2) Within onCreateLoader, return a new AsyncTaskLoader that looks a lot like the existing FetchWeatherTask.
     @Override
     public Loader<String[]> onCreateLoader(int id, final Bundle args) {
         return new AsyncTaskLoader<String[]>(this) {
@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
                 }
             }
 
-            // TODO (3) Cache the weather data in a member variable and deliver it in onStartLoading.
+            // COMPLETED (3) Cache the weather data in a member variable and deliver it in onStartLoading.
             @Override
             public void deliverResult(String[] data) {
                 cachedData = data;
@@ -209,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
         };
     }
 
-    // TODO (4) When the load is finished, show either the data or an error message if there is no data
+    // COMPLETED (4) When the load is finished, show either the data or an error message if there is no data
     @Override
     public void onLoadFinished(Loader<String[]> loader, String[] weatherData) {
         Toast.makeText(MainActivity.this, "onLoadFinished", Toast.LENGTH_LONG).show();;
@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
-    // TODO (6) Remove any and all code from MainActivity that references FetchWeatherTask
+    // COMPLETED (6) Remove any and all code from MainActivity that references FetchWeatherTask
 
 
     /**
@@ -313,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        // TODO (5) Refactor the refresh functionality to work with our AsyncTaskLoader
+        // COMPLETED (5) Refactor the refresh functionality to work with our AsyncTaskLoader
         if (id == R.id.action_refresh) {
             mForecastAdapter.setWeatherData(null);
             loadWeatherData();
