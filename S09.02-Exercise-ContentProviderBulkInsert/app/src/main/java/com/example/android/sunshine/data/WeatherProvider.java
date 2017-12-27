@@ -20,8 +20,11 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+
+import com.example.android.sunshine.utilities.SunshineDateUtils;
 
 /**
  * This class serves as the ContentProvider for all of Sunshine's data. This class allows us to
@@ -122,7 +125,7 @@ public class WeatherProvider extends ContentProvider {
         return true;
     }
 
-//  TODO (1) Implement the bulkInsert method
+//  COMPLETED (1) Implement the bulkInsert method
     /**
      * Handles requests to insert a set of new rows. In Sunshine, we are only going to be
      * inserting multiple rows of data at a time from a weather forecast. There is no use case
@@ -138,13 +141,73 @@ public class WeatherProvider extends ContentProvider {
      */
     @Override
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
-        throw new RuntimeException("Student, you need to implement the bulkInsert method!");
 
-//          TODO (2) Only perform our implementation of bulkInsert if the URI matches the CODE_WEATHER code
+        // The bulkInsert will start with the same database accessing and
+        // and URI match code that you've seen before
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        int match = sUriMatcher.match(uri);
 
-//              TODO (3) Return the number of rows inserted from our implementation of bulkInsert
+        // COMPLETED (2) Only perform our implementation of bulkInsert if the URI matches the CODE_WEATHER code
 
-//          TODO (4) If the URI does match match CODE_WEATHER, return the super implementation of bulkInsert
+        switch(match) {
+            case CODE_WEATHER:
+                // In this time, inside our weather directory case we'll
+                // also include a database transaction.
+                // A transaction is a way to mark the start and end of a large
+                // data transfer. So you want to start a transaction, then try to
+                // do all your inserts and finally end the transaction.
+                // So here we begin the transaction and also initialize the number
+                // of row inserted to 0.
+
+                db.beginTransaction();
+                int rowsInserted = 0;
+
+                // To try inserting and then end the transaction we'll use
+                // a try statement to do our inserts and then something
+                // called a finally block of code.
+
+                try {
+                    // try to insert all data
+                    // loop through all our content values
+                    for (ContentValues value: values) {
+                        // we'll insert each days weather into the underlying database using db.insert.
+                        long weatherDate = value.getAsLong(WeatherContract.WeatherEntry.COLUMN_DATE);
+
+                        if (!SunshineDateUtils.isDateNormalized(weatherDate)) {
+                            throw new IllegalArgumentException("Date must be normalized to insert");
+                        }
+
+                        long _id = db.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, value);
+                        if (_id != -1) {
+                            // if an insert is successful we'll update the number of rows inserted.
+                            rowsInserted++;
+                        }
+                    }
+
+                    // after the for loop is completed, we set the transaction state to be successful.
+                    db.setTransactionSuccessful();
+
+                } finally {
+                    // execute after the try is complete
+                    // here we'll just end the transaction.
+                    db.endTransaction();
+                }
+                // COMPLETED (3) Return the number of rows inserted from our implementation of bulkInsert
+                // we'll notify the content resolver that a change has been made to the directory URI.
+                // we'll do this with a call to notify change
+                if(rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                // return the number of rows that were inserted.
+                return rowsInserted;
+
+            default:
+                // COMPLETED (4) If the URI does match match CODE_WEATHER, return the super implementation of bulkInsert
+                // just return the super implementation of bulk insert, this is the
+                // implementation in Android's content provider class that this
+                // weather provider extends from.
+                return super.bulkInsert(uri, values);
+        }
     }
 
     /**
